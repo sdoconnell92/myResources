@@ -1,0 +1,13 @@
+*********************************************
+Virtualbox Notes
+*********************************************
+
+- Increasing size of vdi or vhd
+	- remove drive from virtual machine
+	- close virtualbox
+	- make backup copy of virtual disk
+	- vboxmanage modifyhd /location-of-your-virtual-disk --resize size-in-MB
+	- attatch the virtual disk to machine
+	- boot from live linux disk
+	- open gparted
+	- resize partition 
