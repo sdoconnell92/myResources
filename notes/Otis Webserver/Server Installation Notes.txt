@@ -1,0 +1,67 @@
+*************************
+Server Installation Notes
+	otis_beta_1.0
+*************************
+- Tomcat 8 notes
+	- Directories
+		/var/lib/tomcat8/
+				- Contains webapps folder
+		/var/lib/tomcat8/conf			
+				- Contains config files
+		/etc/tomcat8
+				- Also contains config files
+		/etc/default/tomcat8
+				- Also contains config files
+		/usr/share/tomcat8
+				- For Runtime
+				- called CATALINA_HOME
+		/usr/share/tomcat8-root
+				- for webapps
+		/tmp/tomcat8-tomcat8-tmp/
+				- Temp Folder
+
+	-Start Stop Restart
+		systemctl start tomcat8
+		systemctl stop tomcat8
+		systemctl restart tomcat8
+
+- SqliteSync Notes
+	LOG_LEVEL - defain details level for log
+	4: TRACE, DEBUG, INFO, WARN; (default)
+	3: DEBUG, INFO, WARN;
+	2: INFO,WARN;
+	1: WARN;
+	0 - disable logs
+
+	DATE_FORMAT - set format of date
+	default format: yyyy-MM-dd HH:mm:ss
+
+	HISTORY_DAYS - How long files with sync data will be kept
+	default value: 7
+
+	When you use MySQL database DO NOT remove
+	?rewriteBatchedStatements=true
+	from the end of the connection string
+
+	If you faced a timezone error after configuration in `sync.properties` just add line:
+	&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+	at the end of line:
+	DBURL = jdbc:mysql://server:3306/dbname?rewriteBatchedStatements=true
+
+- MySql Notes
+	- Initialize data with 
+		mysqld --initialize
+			- if installed from debian repo data is already initialized
+	- Start Stop Restart
+		systemctl start mysql.service
+		systemctl stop mysql.service
+		systemctl restart mysql.service
+
+	- mysqladmin
+		- interesting little tool
+		- takes options
+			-p 			prompt for a password
+			-u 			connect as specified User
+			version		returns the version
+		- usage:
+			mysqladmin -p -u root version

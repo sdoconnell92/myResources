@@ -1,0 +1,90 @@
+***************************
+Server Installation Process
+	otis_beta_1.0
+***************************
+- sudo apt-get update
+- sudo apt-get upgrade
+- Create temp folder
+	-mkdir /tmp/otis-install
+
+- Install mySql
+	- sudo apt-get install mysql-server
+	- Run the secure installation script
+		mysql_secure_installation
+	- Test that it is running with
+		systemctl status mysql.service
+	- Boom mysql is running
+
+- Setup Database
+	- sftp into server
+		- put otis_data.sql file into otis-install
+		- put otis_users.sql file into otis-install
+		- put SqliteSync_315.war file into otis-install
+	- ssh into server again
+	- login to mysql
+		- mysql -uroot -pC
+			Create Database otis_data;
+			\q
+	- run script on mysql
+		mysql -h $host -u $user -p $password db_dbname < /tmp/otis_data.sql
+		mysql -h $host -u $user -p $password db_dbname < /tmp/otis_user_creation.sql
+
+	- log back into mysql
+	- check that the database is correct
+		Use otis_data;
+		Show Tables;
+		\q
+
+
+- Install tomcat8
+	- sudo apt-get install tomcat8 tomcat8-docs tomcat8-examples tomcat8-admin
+	- Test that it is working
+		- navigate to http://example.com:8080/
+	- Get Web admin console working
+		- add some simalar text in /var/lib/tomcat8/conf/tomcat-users.xml
+			<role rolename="manager-gui"/>
+			<role rolename="admin-gui"/>
+			<user username="username" password="password" roles="manager-gui,admin-gui"/>
+		- Restart tomcat8
+
+- Create Directory structure for sqlitesync
+	mkdir /home/sqlitesync
+	mkdir /home/sqlitesync/config
+	nano /home/sqlitesync/config/sync.properties
+		DB_ENGINE = mysql
+		DBURL = jdbc:mysql://<server>:3306/dbname?rewriteBatchedStatements=true
+		DBUSER = <user>
+		DBPASS = <pass>
+		DBDRIVER = com.mysql.cj.jdbc.Driver
+		DATE_FORMAT = yyyy-MM-dd HH:mm:ss
+		HISTORY_DAYS = 7
+		LOG_LEVEL = 4
+
+- Deploy sqlitesync_315 war file
+	cd /var/lib/tomcat8/webapps/
+	cp /tmp/otis-install/SqliteSync_315.war ./
+	
+- Test Sqlitesync
+	- Enter http://your_server_address/SqliteSync_315/API3/
+	- You should see message: 'API[3.1.5] SQLite-Sync.COM is working correctly!’
+
+- Website configuration (web.xml)
+	- Go to the tomcat webapps foler/SqliteSync_315/WEB-INF/
+	- open web.xml
+	- make sure that the working directory entry points to the sqlitesync directory we made earlier
+	- Now we need to add security constraints for login purposes
+		- this uses standard tomcat8 security
+		- Add the following text right befor </web-app>
+			    <security-constraint>
+			        <web-resource-collection>
+			            <web-resource-name>
+			            </web-resource-name>
+			            <url-pattern>/*</url-pattern>
+			        </web-resource-collection>
+			        <auth-constraint>
+			            <role-name>otis-user</role-name>
+			        </auth-constraint>
+			    </security-constraint>
+			    <login-config>
+			        <auth-method>BASIC</auth-method>
+			    </login-config>
