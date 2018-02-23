@@ -63,7 +63,7 @@ Server Installation Process
 - Deploy sqlitesync_315 war file
 	cd /var/lib/tomcat8/webapps/
 	cp /tmp/otis-install/SqliteSync_315.war ./
-	
+
 - Test Sqlitesync
 	- Enter http://your_server_address/SqliteSync_315/API3/
 	- You should see message: 'API[3.1.5] SQLite-Sync.COM is working correctly!’
