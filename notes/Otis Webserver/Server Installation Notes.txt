@@ -65,3 +65,7 @@ Server Installation Notes
 			version		returns the version
 		- usage:
 			mysqladmin -p -u root version
+
+- Linux Notes
+	unpack tar.gz
+	tar xfz <pycharm-professional or pycharm-community>-*.tar.gz -C <new_archive_folder>
